@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  forecasting-api:
+    build: .
+    container_name: forecasting_api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data          # mount your Excel file here
+      - ./saved_models:/app/saved_models
+      - ./logs:/app/logs
+      - ./plots:/app/plots
+    environment:
+      - DEBUG=false
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+      - FORECAST_HORIZON=8
+      - VALIDATION_WEEKS=12
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
